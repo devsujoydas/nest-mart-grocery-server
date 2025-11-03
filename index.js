@@ -1,52 +1,31 @@
+require("dotenv").config();
 const express = require("express");
-require("dotenv").config()
-const nodemailer = require("nodemailer");
 const cors = require("cors");
-const bodyParser = require("body-parser");
+const cookieParser = require("cookie-parser");
+const connectDB = require("./src/configs/db");
+const { PORT } = require("./src/configs/config");
+const allRoutes = require("./app");
 
 const app = express();
-const port = process.env.PORT || 3000
+const port = PORT || 3000;
+
+app.use(express.json());
+app.use(cookieParser());
+
+connectDB();
 
 
-app.use(cors());
-app.use(bodyParser.json());
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://xenonmedia.netlify.app", "https://xenonmedia.vercel.app",],
+    credentials: true,
+  })
+);
 
-app.post("/send", async (req, res) => {
-    const { name, email, phone, subject, message } = req.body;
-    
-    console.log(req.body)
-    return
-    const transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS,
-        },
-    });
 
-    const mailOptions = {
-        from: email,
-        to: process.env.EMAIL_USER,
-        subject: `Contact Message: ${subject}`,
-        html: `
-      <h3>New Message from Portfolio Contact Form</h3>
-      <p><strong>Name:</strong> ${name}</p>
-      <p><strong>Phone:</strong> ${phone}</p>
-      <p><strong>Email:</strong> ${email}</p>
-      <p><strong>Subject:</strong> ${subject}</p>
-      <p><strong>Message:</strong><br>${message}</p>
-    `,
-    };
+app.get("/", (req, res) => res.send("🟢 Xenon Media v2 Connected With Server & MongoDB"));
+app.use("/api/v2", allRoutes)
 
-    try {
-        await transporter.sendMail(mailOptions);
-        res.status(200).send("Message sent successfully!");
-    } catch (error) {
-        console.error("Error sending email:", error);
-        res.status(500).send("Failed to send message.");
-    }
-});
+app.listen(port, () => { console.log(`🟢 Mongoose Server running on port ${port}`) });
 
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+module.exports = app; 
