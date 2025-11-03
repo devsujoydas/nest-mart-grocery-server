@@ -1,8 +1,6 @@
-const sharp = require("sharp");
-const axios = require("axios");
 
 const User = require("./userModel");
-const postModel = require("../posts/postModel");
+const postModel = require("../product/productModel");
 const { getProfileServices, updateUserServices } = require("./userServices");
 
 
@@ -24,7 +22,7 @@ const activeStatus = async (req, res) => {
 
     const timeout = setTimeout(async () => {
       await User.updateOne({ email }, { $set: { onlineStatus: false } });
-      userTimers.delete(email);
+      userTimers.delete(email); 
     }, 4000);
 
     userTimers.set(email, timeout);

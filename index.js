@@ -17,15 +17,15 @@ connectDB();
 
 app.use(
   cors({
-    origin: ["http://localhost:5173", "https://xenonmedia.netlify.app", "https://xenonmedia.vercel.app",],
+    origin: ["http://localhost:5173", "https://nestmartbd.netlify.app", "https://nestmartbd.vercel.app",],
     credentials: true,
   })
 );
 
 
-app.get("/", (req, res) => res.send("🟢 Xenon Media v2 Connected With Server & MongoDB"));
+app.get("/", (req, res) => res.send("🟢 Nest-Mart-Grocery v2 Connected With Server & MongoDB"));
 app.use("/api/v2", allRoutes)
 
-app.listen(port, () => { console.log(`🟢 Mongoose Server running on port ${port}`) });
+app.listen(port, () => { console.log(`🟢 Nest-Mart-Grocery Server running on port ${port}`) });
 
 module.exports = app; 

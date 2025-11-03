@@ -1,58 +1,111 @@
 const mongoose = require("mongoose");
 
-const userSchema = new mongoose.Schema({
-  name: { type: String, required: true, trim: true },
-  email: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true, },
-  password: { type: String, required: true, minlength: 6 },
-  role: { type: String, enum: ["user", "admin"], default: "user", index: true, },
+const userSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true, trim: true },
 
-  refreshToken: { type: String },
-  passwordReset: {
-    token: { type: String },
-    expires: { type: Date },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      index: true,
+    },
+
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      index: true,
+    },
+
+    dateOfBirth: { type: Date },
+
+    password: { type: String, required: true, minlength: 6 },
+    refreshToken: { type: String },
+
+    role: {
+      type: String,
+      enum: ["customer", "vendor", "admin"],
+      default: "customer",
+      index: true,
+    },
+ 
+    store: {
+      description: { type: String, default: "" },
+      logo: { type: String, default: "/images/default-store.png" },
+      location: { type: String, default: "" },
+      socialLinks: {
+        facebook: { type: String, default: "" },
+        instagram: { type: String, default: "" },
+        twitter: { type: String, default: "" },
+        linkedin: { type: String, default: "" },
+        youtube: { type: String, default: "" },
+      },
+      isApproved: { type: Boolean, default: false },
+      createdAt: { type: Date, default: Date.now },
+    },
+
+    profilePhoto: { type: String, default: "/images/default-user.jpg" },
+    phone: { type: String, trim: true },
+
+    address: {
+      fullName: { type: String, trim: true },
+      phone: { type: String, trim: true },
+      street: { type: String, trim: true },
+      city: { type: String, trim: true },
+      state: { type: String, trim: true },
+      postalCode: { type: String, trim: true },
+      country: { type: String, trim: true },
+    },
+
+    location: {
+      from: { type: String, default: "" },
+      livesIn: { type: String, default: "" },
+    },
+
+    cart: [
+      {
+        product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+        quantity: { type: Number, default: 1 },
+        addedAt: { type: Date, default: Date.now },
+      },
+    ],
+
+    wishlist: [
+      {
+        product: { type: mongoose.Schema.Types.ObjectId, ref: "Product" },
+        addedAt: { type: Date, default: Date.now },
+      },
+    ],
+
+    order: [
+      {
+        orderId: { type: mongoose.Schema.Types.ObjectId, ref: "Order" },
+        placedAt: { type: Date, default: Date.now },
+      },
+    ],
+
+    isVerified: { type: Boolean, default: false },
+    securityCode: { type: String },
+
+    passwordReset: {
+      token: { type: String },
+      expires: { type: Date },
+    },
   },
-
-  profile: {
-    username: { type: String, unique: true, lowercase: true, trim: true },
-    profilePhoto: { type: String, default: "/default.jpg" },
-    coverPhoto: { type: String, default: "/default-cover.jpg" },
-    bio: { type: String, default: "" },
-    phone: { type: String, default: "" },
-  },
-
-  socialLinks: {
-    website: { type: String, default: "" },
-    facebook: { type: String, default: "" },
-    linkedin: { type: String, default: "" },
-    twitter: { type: String, default: "" },
-    instagram: { type: String, default: "" },
-    github: { type: String, default: "" },
-    youtube: { type: String, default: "" },
-  },
-  location: {
-    from: { type: String, default: "" },
-    livesIn: { type: String, default: "" }
-  },
-
-  friendRequests: [{
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    requestedAt: { type: Date, default: Date.now }
-  }],
-  sentRequests: [{
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    requestedAt: { type: Date, default: Date.now }
-  }],
-  myFriends: [{
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    since: { type: Date, default: Date.now }
-  }],
-
-  onlineStatus: { type: Boolean, default: false },
-},
   { timestamps: true }
 );
 
-userSchema.index({ name: "text", email: "text", role: "text" });
+userSchema.index({
+  name: "text",
+  username: "text",
+  email: "text",
+  role: "text",
+});
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
